@@ -10,8 +10,15 @@ export async function POST(request) {
   try {
     const { pdfPath: pdfUrlPath, signatureBase64, normalizedCoords, pageNumber } = await request.json();
 
-    const pdfPath = path.join(process.cwd(), 'public', pdfUrlPath);
-    const originalPdfBuffer = fs.readFileSync(pdfPath);
+    let originalPdfBuffer;
+
+    if (pdfUrlPath.startsWith('data:application/pdf;base64,')) {
+      const base64Data = pdfUrlPath.split(',')[1];
+      originalPdfBuffer = Buffer.from(base64Data, 'base64');
+    } else {
+      const pdfPath = path.join(process.cwd(), 'public', pdfUrlPath);
+      originalPdfBuffer = fs.readFileSync(pdfPath);
+    }
 
     const originalHash = calculateHash(originalPdfBuffer);
 

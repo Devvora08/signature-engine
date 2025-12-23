@@ -19,14 +19,22 @@ export async function POST(request) {
 
     const timestamp = Date.now();
     const fileName = `${timestamp}-${file.name}`;
-    const filePath = path.join(process.cwd(), 'public', 'uploads', fileName);
+    const tmpDir = '/tmp';
+    const filePath = path.join(tmpDir, fileName);
+
+    if (!fs.existsSync(tmpDir)) {
+      fs.mkdirSync(tmpDir, { recursive: true });
+    }
 
     fs.writeFileSync(filePath, buffer);
+
+    const base64Data = buffer.toString('base64');
+    const dataUrl = `data:application/pdf;base64,${base64Data}`;
 
     return NextResponse.json({
       success: true,
       fileName,
-      pdfUrl: `/uploads/${fileName}`,
+      pdfUrl: dataUrl,
     });
   } catch (error) {
     console.error('Error uploading PDF:', error);
