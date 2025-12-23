@@ -1,0 +1,6 @@
+node_modules
+.next
+.env.local
+signed/*.pdf
+public/signed/*.pdf
+public/uploads/*.pdf

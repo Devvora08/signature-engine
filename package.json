@@ -1,0 +1,26 @@
+{
+  "name": "signature-injection-engine",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "react-pdf": "^7.7.0",
+    "pdfjs-dist": "^3.11.174",
+    "pdf-lib": "^1.17.1",
+    "mongoose": "^8.1.0",
+    "react-rnd": "^10.4.1"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.33"
+  }
+}
