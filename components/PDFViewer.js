@@ -19,7 +19,6 @@ export default function PDFViewer() {
   const [signatureField, setSignatureField] = useState(null);
   const [canvasDimensions, setCanvasDimensions] = useState({ width: 0, height: 0 });
   const containerRef = useRef(null);
-  const [signedPdfUrl, setSignedPdfUrl] = useState(null);
   const [currentPdf, setCurrentPdf] = useState('/sample.pdf');
   const [uploadedPdfs, setUploadedPdfs] = useState([{ name: 'sample.pdf', path: '/sample.pdf' }]);
   const [uploading, setUploading] = useState(false);
@@ -148,8 +147,19 @@ export default function PDFViewer() {
       const result = await response.json();
 
       if (result.success) {
-        setSignedPdfUrl(result.signedPdfUrl);
+        const pdfBlob = new Blob(
+          [Uint8Array.from(atob(result.signedPdfBase64), c => c.charCodeAt(0))],
+          { type: 'application/pdf' }
+        );
+        const url = URL.createObjectURL(pdfBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = result.signedFileName;
+        link.click();
+        URL.revokeObjectURL(url);
+
         alert('PDF signed successfully!\nOriginal Hash: ' + result.originalHash + '\nSigned Hash: ' + result.signedHash);
+        setSignedPdfUrl(null);
       } else {
         alert('Error signing PDF: ' + result.error);
       }
@@ -212,19 +222,6 @@ export default function PDFViewer() {
           Sign Document
         </button>
       </div>
-
-      {signedPdfUrl && (
-        <div className="mb-4 p-4 bg-green-100 border border-green-400 rounded">
-          <p className="font-semibold">Document signed successfully!</p>
-          <a
-            href={signedPdfUrl}
-            download
-            className="text-blue-600 underline"
-          >
-            Download Signed PDF
-          </a>
-        </div>
-      )}
 
       {numPages && (
         <div className="mb-4 flex gap-2 items-center">

@@ -29,9 +29,6 @@ export async function POST(request) {
     const timestamp = Date.now();
     const pdfId = path.basename(pdfUrlPath, '.pdf');
     const signedFileName = `signed-${pdfId}-${timestamp}.pdf`;
-    const signedPdfPath = path.join(process.cwd(), 'public', 'signed', signedFileName);
-
-    fs.writeFileSync(signedPdfPath, signedPdfBuffer);
 
     await connectDB();
 
@@ -39,15 +36,18 @@ export async function POST(request) {
       pdfId,
       originalHash,
       signedHash,
-      signedPdfPath: `/signed/${signedFileName}`,
+      signedPdfPath: signedFileName,
       coordinates: normalizedCoords,
     });
 
     await signatureRecord.save();
 
+    const signedPdfBase64 = Buffer.from(signedPdfBuffer).toString('base64');
+
     return NextResponse.json({
       success: true,
-      signedPdfUrl: `/signed/${signedFileName}`,
+      signedPdfBase64,
+      signedFileName,
       originalHash,
       signedHash,
     });
